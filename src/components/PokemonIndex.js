@@ -8,7 +8,8 @@ const API = `http://localhost:3000/pokemon`
 
 class PokemonPage extends React.Component {
   state = {
-    pokemonArray: []
+    pokemonArray: [],
+    search: ''
   }
 
   componentDidMount(){
@@ -17,17 +18,23 @@ class PokemonPage extends React.Component {
     .then(pokemon => this.setState({pokemonArray: pokemon}))
   }
 
+  handleSearch = (e, {value}) => {
+    this.setState({search: value})
+  }
+
+
 
   render() {
 
-    console.log(this.state.pokemonArray)
+    let filterPokemon = this.state.pokemonArray.filter(p => p.name.includes(this.state.search))
+
     return (
       <div>
         <h1>Pokemon Searcher</h1>
         <br />
-        <Search onSearchChange={_.debounce(() => console.log('🤔'), 500)} showNoResults={false} />
+        <Search onSearchChange={_.debounce(this.handleSearch, 500)} showNoResults={false} />
         <br />
-        <PokemonCollection pokemonArray={this.state.pokemonArray} />
+        <PokemonCollection pokemonArray={filterPokemon} />
         <br />
         <PokemonForm />
       </div>
