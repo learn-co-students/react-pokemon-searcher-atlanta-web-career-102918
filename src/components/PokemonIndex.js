@@ -8,23 +8,28 @@ class PokemonPage extends React.Component {
   state = {
     pokemon: null,
     loading: true, 
+    filteredPokemon: null
   };
 
   componentDidMount() {
     fetch("http://localhost:3000/pokemon")
       .then(res => res.json())
-      .then(pokemon => this.setState({ pokemon, loading: false }));
+      .then(pokemon => this.setState({ pokemon, loading: false, filteredPokemon: pokemon }));
   }
 
   handleSearchChange = (e, { value }) => {
+    console.log(this.state.pokemon)
     let filteredPokemon = this.state.pokemon.filter((pokemon) => {
-      return pokemon === value
+      console.log('From inside the filter:', pokemon.name)
+      return pokemon.name.includes(value)
     }) 
-    this.setState({ pokemon: filteredPokemon })
+    console.log('Input Value:', value)
+    console.log('Filtered Pokemon:', filteredPokemon)
+    this.setState({ filteredPokemon })
   }
 
   render() {
-    const { pokemon, loading } = this.state;
+    const { loading, filteredPokemon } = this.state;
     return (
       <div>
         {loading === true ? (
@@ -34,11 +39,11 @@ class PokemonPage extends React.Component {
             <h1>Pokemon Searcher</h1>
             <br />
             <Search
-              onSearchChange={_.debounce(() => this.handleSearchChange, 500)}
+              onSearchChange={_.debounce(this.handleSearchChange, 500)}
               showNoResults={false}
             />
             <br />
-            <PokemonCollection pokemon={pokemon} />
+            <PokemonCollection pokemon={filteredPokemon} />
             <br />
             <PokemonForm />
           </div>
